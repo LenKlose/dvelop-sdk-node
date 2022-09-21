@@ -1,21 +1,46 @@
 <div align="center">
-  <img alt="GitHub" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
-</div>
 
-</br>
-
-<div align="center">
-  <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/app-router?label=app-router&style=for-the-badge">
-  <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/identityprovider?label=identityprovider&style=for-the-badge">
-  <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/task?label=task&style=for-the-badge">
-  <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/dms?label=app-router&style=for-the-badge">
-</div>
-
-</br>
-
-<div align="center">
   <h1>dvelop-sdk-node</h1>
+
+  <img alt="GitHub" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
+
+  </br>
+
+  <h2>Apps</h2>
+  <a href="https://www.npmjs.com/package/@dvelop-sdk/app-router">
+    <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/app-router?label=app-router&style=for-the-badge">
+  </a>
+  <a href="https://www.npmjs.com/package/@dvelop-sdk/identityprovider">
+    <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/identityprovider?label=identityprovider&style=for-the-badge">
+  </a>
+  <a href="https://www.npmjs.com/package/@dvelop-sdk/task">
+    <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/task?label=task&style=for-the-badge">
+  </a>
+  <a href="https://www.npmjs.com/package/@dvelop-sdk/dms">
+    <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/dms?label=dms&style=for-the-badge">
+  </a>
+
+  <a href="https://www.npmjs.com/package/@dvelop-sdk/business-objects">
+    <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/business-objects?label=business-objects&style=for-the-badge">
+  </a>
+
+  </br>
+
+<h2>Utilities</h2>
+  <a href="https://www.npmjs.com/package/@dvelop-sdk/express-utils">
+    <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/express-utils?label=express-utils&style=for-the-badge">
+  </a>
+<a href="https://www.npmjs.com/package/@dvelop-sdk/logging">
+    <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/logging?label=logging&style=for-the-badge">
+  </a>
+
+  </br>
+  </br>
+
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
+
+  <a href="https://www.npmjs.com/~d-velop"><strong>Explore on npm »</strong></a>
+
 </div>
 
 </br>
@@ -23,7 +48,7 @@
 ## About
 
 This is the official SDK to build apps for [d.velop cloud](https://www.d-velop.de/cloud/) using
-[node.js](https://nodejs.org/en/) and [typescirpt](https://www.typescriptlang.org/).
+[node.js](https://nodejs.org/en/) and [typescript](https://www.typescriptlang.org/).
 
 
 ## Getting started
@@ -48,14 +73,36 @@ import { Repository, getRepository } from "@dvelop-sdk/dms";
 })();
 ```
 
-You can also run them in ES6 javascript:
+
+
 ```
 npm i @dvelop-sdk/task
+```
+``` typescript
+import { createTask } from "@dvelop-sdk/task";
+
+(async function main() {
+
+  const taskLocation = await createTask({
+    systemBaseUri: "https://umbrella-corp.d-velop.cloud",
+    authSessionId: "dQw4w9WgXcQ"
+  }, {
+    subject: "Cover up lab accident",
+    assignees: ["XiFkyR35v2Y"]
+  });
+
+  console.log(taskLocation); // some/task/location
+})();
+```
+
+You can also run them in ES6 javascript without typescript:
+```
+npm i @dvelop-sdk/dms
 ```
 ```json
 //package.json
 {
-  "type":"module",
+  "type":"module"
 }
 ```
 ```javascript
@@ -89,10 +136,8 @@ This SDK was designed framework agnostic but with [express](https://www.npmjs.co
 
 Install dependencies:
 ```
-npm i typescript express cookie-parser @dvelop-sdk/app-router @dvelop-sdk/identityprovider
-```
-```
-npm i @types/express @types/cookie-parser ts-node-dev -D
+npm i express cookie-parser @dvelop-sdk/express-utils
+npm i typescript @types/express @types/cookie-parser -D
 ```
 Be sure to set the ```esModuleInterop```-flag for typescript:
 ```json
@@ -108,117 +153,50 @@ Be sure to set the ```esModuleInterop```-flag for typescript:
 
 Set up your app:
 ```typescript
-// src/middleware/dvelop.ts
 
-import { Request, Response, NextFunction } from "express";
-import * as appRouter from "@dvelop-sdk/app-router";
-import * as idp from "@dvelop-sdk/identityprovider";
-
-// ATTENTION: This should never be checked into version control
-const APP_SECRET = process.env.APP_SECRET;
-
-export function validateSignatureAndSetDvelopContext(req: Request, res: Response, next: NextFunction) {
-
-  const systemBaseUri: string = req.header(appRouter.DVELOP_SYSTEM_BASE_URI_HEADER);
-  const tenantId: string = req.header(appRouter.DVELOP_TENANT_ID_HEADER);
-  const requestSignature: string = req.header(appRouter.DVELOP_REQUEST_SIGNATURE_HEADER);
-
-  try {
-    appRouter.validateRequestSignature(APP_SECRET, systemBaseUri, tenantId, requestSignature);
-  } catch (e) {
-    if (e instanceof appRouter.InvalidRequestSignatureError) {
-      console.log(e);
-      res.status(403).send('Forbidden');
-    }
-  }
-
-  req.systemBaseUri = systemBaseUri;
-  req.tenantId = tenantId
-  req.requestId = req.header(appRouter.DVELOP_REQUEST_ID_HEADER);
-  next();
-}
-
-export async function validateUser(req: Request, res: Response, next: NextFunction) {
-
-  let authSessionId: string;
-
-  const authorizationHeader = req.get("Authorization");
-  const authorizationCookie = req.cookies["AuthSessionId"];
-  if (authorizationHeader) {
-    authSessionId = new RegExp(/^bearer (.*)$/, "i").exec(authorizationHeader)[1];
-  } else if (authorizationCookie) {
-    authSessionId = authorizationCookie;
-  }
-
-  try {
-    const user: idp.ScimUser = await idp.validateAuthSessionId(req.systemBaseUri, authSessionId);
-    req.user = user;
-    next();
-  } catch (e) {
-    if (e instanceof idp.UnauthorizedError) {
-      res.redirect(idp.getLoginRedirectionUri(req.originalUrl));
-    }
-  }
-};
-```
-
-```typescript
-// src/main.ts
-import express, { Application, Request, Response } from "express"
-import { ScimUser } from "@dvelop-sdk/identityprovider";
-import { validateSignatureAndSetDvelopContext, validateUser } from "./middleware/dvelop";
+import express, { Application, NextFunction, Request, Response } from "express"
 import cookieParser from "cookie-parser";
-
-declare global {
-  namespace Express {
-    interface Request {
-      systemBaseUri?: string;
-      tenantId?: string;
-      requestId?: string;
-      user?: ScimUser
-    }
-  }
-}
+import { authenticationMiddleware, contextMiddleware, validateSignatureMiddlewareFactory, InvalidRequestSignatureError, UnauthorizedError, redirectToLoginPage } from "@dvelop-sdk/express-utils";
 
 const app: Application = express();
 const appName: string = "acme-myapp";
-const appPort: number = 8001;
-
-app.use(validateSignatureAndSetDvelopContext);
+const appPort: number = 5000;
 
 app.use(cookieParser());
-app.use(validateUser);
+app.use(contextMiddleware); // Make the req.dvelopContext-property available
+app.use(validateSignatureMiddlewareFactory(process.env.APP_SECRET)); // Check the d.velop signature.
 
-app.get(`/${appName}/me`, (req: Request, res: Response) => {
-
-  res.status(200).send(`
-    <h1>Hello ${req.user.displayName}</h1>
-    <p>Greetings from ${process.env.npm_package_name} (${process.env.npm_package_version})!</p>
-  `);
+app.get(`/${appName}/me`, authenticationMiddleware, (req: Request, res: Response) => {
+  res.status(200).send(`<h1>Hello ${req.dvelopContext.user.displayName}</h1>`);
 });
 
 app.get(`/${appName}`, (req: Request, res: Response) => {
-  res.status(200).send(`
-    <h1>Hello Tenant ${req.tenantId} (${req.systemBaseUri})</h1>
-    <p>Greetings from ${process.env.npm_package_name} (${process.env.npm_package_version})!</p>
-  `);
+  res.status(200).send(`<h1>Hello Tenant ${req.dvelopContext.systemBaseUri} (${req.dvelopContext.tenantId})</h1>`);
 });
 
-app.use("/", (_: Request, res: Response) => {
-  res.redirect(`/${appName}`);
+app.use((err: any, req: Request, res: Response, _: NextFunction) => {
+  if (err instanceof InvalidRequestSignatureError) {
+    res.status(403).send("Forbidden"); // Indicates a problem with the App-Secret
+  } else if (err instanceof UnauthorizedError) {
+    redirectToLoginPage(req, res); // Not authenticated => send to IDP login-page
+  } else {
+    console.log(err);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
-// Start
 app.listen(appPort, () => {
   console.log(`D.velop app listening on port ${appPort} ...`);
 });
 ```
 
-
 Don't forget to set your APP_SECRET and then start your app:
 ```
-npx ts-node-dev src/main.ts
+npx tsc && node src/main.js
 ```
+
+The ```req.dvelopContext```-property can now be used for other SDK-functions.
+
 
 <div align="center">
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
@@ -228,7 +206,6 @@ npx ts-node-dev src/main.ts
 
 
 ## Advanced Topics
-**Attention: Currently only available in @dvelop-sdk/dms**
 
 Under the hood this SDK uses a functional programming approach. Generally all top-level SDK methods are created by factory-methods. This allows to inject default implementations and at the same time give consumers next-to-full control over steps taken.
 
@@ -315,4 +292,4 @@ Thanks to the following projects for inspiration
 
 * [Starting an Open Source Project](https://opensource.guide/starting-a-project/)
 * [README template](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
-* [CONTRIBUTING template](https://github.com/nayafia/contributing-template/blob/master/CONTRIBUTING-template.md)
+* [CONTRIBUTING template](https://github.com/nayafia/contributing-template/blob/main/CONTRIBUTING-template.md)

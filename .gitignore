@@ -1,7 +1,9 @@
 node_modules
 /packages/*/lib/
+/packages/*/package-lock.json
 docs
 *.tsbuildinfo
 tmp-*
-lerna-debug.log
 chicken.*
+.vscode
+.idea

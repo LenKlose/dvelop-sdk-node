@@ -9,13 +9,13 @@
   <a href="https://github.com/d-velop/dvelop-sdk-node">
     <img alt="GitHub" src="https://img.shields.io/badge/GitHub-dvelop--sdk--node-%23ff0844?logo=github&style=for-the-badge">
   </a>
-  <a href="https://github.com/d-velop/dvelop-sdk-node/blob/master/LICENSE">
+  <a href="https://github.com/d-velop/dvelop-sdk-node/blob/main/LICENSE">
     <img alt="license" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
   </a
 
   </br>
 
-  <p>This package contains functionality for the <a href="https://developer.d-velop.de/documentation/idpapi/en/identityprovider-app-201523580.html">Identityprovider-App</a> in the d.velop cloud.</p>
+  <p>This package contains functionality for the <a href="https://developer.d-velop.de/documentation/idpapi/en">Identityprovider-App</a> in the d.velop cloud.</p>
 
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules/identityprovider.html"><strong>Explore the docs »</strong></a>
 

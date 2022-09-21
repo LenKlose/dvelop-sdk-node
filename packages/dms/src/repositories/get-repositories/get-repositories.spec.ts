@@ -40,10 +40,11 @@ describe("getRepositoriesFactory", () => {
     mockTransformFunction.mockReturnValue(transformResult);
 
     const getRepositories = _getRepositoriesFactory(mockHttpRequestFunction, mockTransformFunction);
-    await getRepositories(context);
+    const result = await getRepositories(context);
 
     expect(mockTransformFunction).toHaveBeenCalledTimes(1);
     expect(mockTransformFunction).toHaveBeenCalledWith(response, context);
+    expect(result).toEqual(transformResult);
   });
 
   describe("getRepositoriesDefaultTransformFunction", () => {
@@ -103,7 +104,7 @@ describe("getRepositoriesFactory", () => {
       const result: Repository[] = await getRepositories(context);
 
       data.repositories.forEach((repoDto: any, i: number) => {
-        expect(result[i]).toHaveProperty("id", repoDto.id);
+        expect(result[i]).toHaveProperty("repositoryId", repoDto.id);
         expect(result[i]).toHaveProperty("name", repoDto.name);
         expect(result[i]).toHaveProperty("sourceId", repoDto._links.source.href);
       });

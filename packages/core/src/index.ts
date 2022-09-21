@@ -10,7 +10,7 @@
   <a href="https://github.com/d-velop/dvelop-sdk-node">
     <img alt="GitHub" src="https://img.shields.io/badge/GitHub-dvelop--sdk--node-%23ff0844?logo=github&style=for-the-badge">
   </a>
-  <a href="https://github.com/d-velop/dvelop-sdk-node/blob/master/LICENSE">
+  <a href="https://github.com/d-velop/dvelop-sdk-node/blob/main/LICENSE">
     <img alt="license" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
   </a>
   </br>
@@ -26,5 +26,12 @@
 export { DvelopContext } from "./context/context";
 export * from "./errors/errors";
 export * from "./http/http-headers";
-export { DvelopHttpRequestConfig, HttpResponse as DvelopHttpResponse, DvelopHttpError, DvelopHttpClient, defaultDvelopHttpClientFactory } from "./http/http-client";
-export { generateRequestId } from "./generate-request-id/generate-request-id";
+export * as internals from "./internal";
+export { DeepMergeError, deepMergeObjects } from "./util/deep-merge-objects";
+export { DvelopHttpRequestConfig, DvelopHttpResponse, DvelopHttpError, DvelopHttpClient, defaultDvelopHttpClientFactory } from "./http/http-client";
+export { generateUuid, generateRequestId } from "./generate-uuid/generate-uudi-id";
+
+export { TraceContext } from "./trace-context/trace-context";
+export { TraceContextError } from "./trace-context/trace-context-error";
+export { buildTraceparentHeader, parseTraceparentHeader } from "./trace-context/traceparent-header/traceparent-header";
+export { generateTraceContext, generateTraceId, generateSpanId } from "./trace-context/generate-trace-context/generate-trace-context";

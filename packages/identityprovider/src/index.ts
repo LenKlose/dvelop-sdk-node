@@ -10,7 +10,7 @@
   <a href="https://github.com/d-velop/dvelop-sdk-node">
     <img alt="GitHub" src="https://img.shields.io/badge/GitHub-dvelop--sdk--node-%23ff0844?logo=github&style=for-the-badge">
   </a>
-  <a href="https://github.com/d-velop/dvelop-sdk-node/blob/master/LICENSE">
+  <a href="https://github.com/d-velop/dvelop-sdk-node/blob/main/LICENSE">
     <img alt="license" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
   </a
   </br>
@@ -23,16 +23,23 @@
 </div>
  * @module identityprovider
  */
-import axios from "axios";
-import { followHalJson } from "@dvelop-sdk/axios-hal-json";
-axios.interceptors.request.use(followHalJson);
+import { DvelopUser } from "./authentication/validate-auth-session-id/validate-auth-session-id";
 
-export { UnauthorizedError, ForbiddenError, NotFoundError, InvalidAppSessionSignatureError } from "./errors";
-export { AuthSession } from "./authentication/get-auth-session/auth-session";
+declare module "@dvelop-sdk/core" {
+  interface DvelopContext {
+    user?: DvelopUser
+  }
+}
+
+// Utils
+export { DvelopContext, BadInputError, UnauthorizedError, ForbiddenError, NotFoundError } from "@dvelop-sdk/core";
+export { IdentityproviderError } from "./utils/http";
+export * as internals from "./internal";
+
+// Authentication
 export { getAuthSession } from "./authentication/get-auth-session/get-auth-session";
-export { ScimUser } from "./authentication/validate-auth-session-id/scim-user";
-export { validateAuthSessionId } from "./authentication/validate-auth-session-id/validate-auth-session-id";
+export { GetImpersonatedAuthSessionIdParams, getImpersonatedAuthSessionId } from "./authentication/get-impersonated-auth-session-id/get-impersonated-auth-session-id";
+export { RequestAppSessionParams, requestAppSession } from "./authentication/request-app-session/request-app-session";
 export { getLoginRedirectionUri } from "./authentication/get-login-redirection-uri/get-login-redirection-uri";
-export { requestAppSession } from "./authentication/request-app-session/request-app-session";
-export { validateAppSessionSignature } from "./authentication/validate-app-session-signature/validate-app-session-signature";
-export { getImpersonatedAuthSessionId } from "./authentication/get-impersonated-auth-session-id/get-impersonated-auth-session-id";
+export { AppSession, validateAppSessionSignature, InvalidAppSessionSignatureError } from "./authentication/validate-app-session-signature/validate-app-session-signature";
+export { validateAuthSessionId, DvelopUser } from "./authentication/validate-auth-session-id/validate-auth-session-id";

@@ -18,12 +18,12 @@ export interface DeleteCurrentDmsObjectVersionParams {
 }
 
 /**
- * Default transform-function provided to the {@link deleteCurrentDmsObjectVersion}-function.
+ * Default transform-function provided to the {@link deleteCurrentDmsObjectVersion}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category DmsObject
  */
 export function _deleteCurrentDmsObjectVersionDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: DeleteCurrentDmsObjectVersionParams): boolean {
-  if (response.data._links.deleteWithReason || response.data._links.delete) {
+  if (response.data?._links?.deleteWithReason || response.data?._links?.delete) {
     return false;
   } else {
     return true;
@@ -31,7 +31,7 @@ export function _deleteCurrentDmsObjectVersionDefaultTransformFunction(response:
 }
 
 /**
- * Factory for the {@link deleteCurrentDmsObjectVersion}-function. See internals for more information.
+ * Factory for the {@link deleteCurrentDmsObjectVersion}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @typeparam T Return type of the {@link deleteCurrentDmsObjectVersion}-function. A corresponding transformFuntion has to be supplied.
  * @internal
  * @category DmsObject

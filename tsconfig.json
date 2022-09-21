@@ -11,9 +11,6 @@
       "path": "./packages/app-router",
     },
     {
-      "path": "./packages/axios-hal-json"
-    },
-    {
       "path": "./packages/identityprovider"
     },
     {
@@ -21,6 +18,15 @@
     },
     {
       "path": "./packages/dms"
+    },
+    {
+      "path": "./packages/business-objects"
+    },
+    {
+      "path": "./packages/express-utils"
+    },
+    {
+      "path": "./packages/logging"
     }
   ]
 }
