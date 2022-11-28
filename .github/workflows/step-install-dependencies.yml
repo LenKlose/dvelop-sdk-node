@@ -1,0 +1,36 @@
+name: Install dependencies
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        type: string
+        required: true
+      node-version:
+        type: number
+        required: true
+
+jobs:
+  install-dependencies:
+    runs-on: ${{ inputs.os }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node-version }}
+    - name: Run 'npm ci'
+      run: npm ci
+    # - name: Cache node_modules
+    #   uses: actions/cache@v3
+    #   # Check restore keys https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#input-parameters-for-the-cache-action
+    #   with:
+    #     path: ~/node_modules
+    #     key: |
+    #       ${{ runner.os }}-install-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+    #       ${{ runner.os }}-install-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-install-${{ env.cache-name }}-
+    #       ${{ runner.os }}-install-
+    #       ${{ runner.os }}-
