@@ -16,3 +16,13 @@ jobs:
     with:
       os: ${{ matrix.os }}
       node-version: ${{ matrix.node-version }}
+
+  build-final:
+    uses: ./.github/workflows/quality-assurance.yml
+    with:
+      os: ubuntu-latest
+      node-version: 18
+      lint: true
+      check-license: true
+      generate-docs: true
+

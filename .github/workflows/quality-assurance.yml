@@ -15,10 +15,13 @@ on:
         type: boolean
         required: false
         default: false
+      generate-docs:
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   build:
-    name: "${{ inputs.os }} - node v${{ inputs.node-version }}"
     runs-on: ${{inputs.os}}
 
     steps:
@@ -47,7 +50,6 @@ jobs:
         path: ${{ github.workspace }}/packages/**/lib/**/*
 
   test:
-    name: "${{ inputs.os }} - node v${{ inputs.node-version }}"
     needs: build
     runs-on: ${{inputs.os}}
 
@@ -74,3 +76,90 @@ jobs:
         path: ${{ github.workspace }}/packages
 
     - run: npm run test
+
+  lint:
+    if: ${{ inputs.lint == 'true' }}
+    needs: build
+    runs-on: ${{inputs.os}}
+
+    steps:
+
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - id: cache-dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/node_modules/
+        key: node_modules-${{ inputs.os }}-${{ inputs.node-version }}-${{ hashFiles('**/package-lock.json') }}
+
+    - if: steps.cached-dependencies.outputs.cache-hit != 'true'
+      run: npm ci
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: build-${{ inputs.os }}-node-${{ inputs.node-version }}
+        path: ${{ github.workspace }}/packages
+
+    - run: npm run lint
+
+  check-license:
+    if: ${{ inputs.check-license == 'true' }}
+    needs: build
+    runs-on: ${{inputs.os}}
+
+    steps:
+
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - id: cache-dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/node_modules/
+        key: node_modules-${{ inputs.os }}-${{ inputs.node-version }}-${{ hashFiles('**/package-lock.json') }}
+
+    - if: steps.cached-dependencies.outputs.cache-hit != 'true'
+      run: npm ci
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: build-${{ inputs.os }}-node-${{ inputs.node-version }}
+        path: ${{ github.workspace }}/packages
+
+    - run: npm run license
+
+  generate-docs:
+    if: ${{ inputs.generate-docs == 'true' }}
+    needs: build
+    runs-on: ${{inputs.os}}
+
+    steps:
+
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - id: cache-dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/node_modules/
+        key: node_modules-${{ inputs.os }}-${{ inputs.node-version }}-${{ hashFiles('**/package-lock.json') }}
+
+    - if: steps.cached-dependencies.outputs.cache-hit != 'true'
+      run: npm ci
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: build-${{ inputs.os }}-node-${{ inputs.node-version }}
+        path: ${{ github.workspace }}/packages
+
+    - run: npm run docs
