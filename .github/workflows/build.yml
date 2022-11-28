@@ -11,7 +11,7 @@ on:
 jobs:
 
   build:
-    name: "on ${{inputs.os}} for Node V${{ inputs.node-version }}"
+    name: "on ${{inputs.os}} for Node v${{ inputs.node-version }}"
     runs-on: ${{inputs.os}}
     steps:
     - uses: actions/checkout@v3
@@ -20,7 +20,7 @@ jobs:
         node-version: ${{ inputs.node-version }}
     - run: npm ci
     - run: npm run build
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
-        name: build-${{inputs.os}}-node-${{ inputs.node-version }}
-        path: dist/
+        name: build-${{ inputs.os }}-node-${{ inputs.node-version }}
+        path: ~/dist/
