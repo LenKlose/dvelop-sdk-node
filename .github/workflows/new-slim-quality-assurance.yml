@@ -11,3 +11,9 @@ jobs:
     with:
       os: ubuntu-latest
       node-version: 18
+  test:
+    uses: ./.github/workflows/build.yml
+    needs: build
+    with:
+      os: ubuntu-latest
+      node-version: 18
