@@ -9,8 +9,8 @@ on:
         required: true
 
 jobs:
-  build:
-    name: "${{ inputs.os }} / Node v${{ inputs.node-version }}"
+  test:
+    name: "${{ inputs.os }} - node v${{ inputs.node-version }}"
     runs-on: ${{inputs.os}}
 
     steps:
