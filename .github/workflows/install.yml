@@ -9,7 +9,7 @@ on:
         required: true
 
 jobs:
-  build:
+  install:
     name: "${{ inputs.os }} / Node v${{ inputs.node-version }}"
     runs-on: ${{inputs.os}}
     steps:
@@ -17,5 +17,11 @@ jobs:
     - uses: actions/setup-node@v3
       with:
         node-version: ${{ inputs.node-version }}
-    - run: npm ci
-    - run: npm run build
+    - id: cached-dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/node_modules/
+        key: node_modules-${{ inputs.os }}-${{ inputs.node-version }}-${{ hashFiles('**/package-lock.json') }}
+    - id: install-dependencies
+      if: steps.cached-dependencies.outputs.cache-hit != 'true'
+      run: npm ci
