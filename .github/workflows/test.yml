@@ -30,10 +30,8 @@ jobs:
     - if: steps.cached-dependencies.outputs.cache-hit != 'true'
       run: npm ci
 
-    - run: npm run build
-
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v3
+    - uses: actions/download-artifact@v3
       with:
         name: build-${{ inputs.os }}-node-${{ inputs.node-version }}
-        path: ${{ github.workspace }}/packages/**/lib/**/*
+
+    - run: npm run test
