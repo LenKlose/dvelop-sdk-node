@@ -1,8 +1,15 @@
 on:
   workflow_call:
+      inputs:
+      os:
+        type: string
+        required: true
+      node-version:
+        type: number
+        required: true
 
 jobs:
-  test:
+  lint:
     name: "${{ inputs.os }} - node v${{ inputs.node-version }}"
     runs-on: ${{inputs.os}}
 
