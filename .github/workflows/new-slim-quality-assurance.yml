@@ -7,10 +7,10 @@ on:
 
 jobs:
   build:
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: "./.github/workflows/build.yml"
+    - uses: ./.github/workflows/build.yml
       with:
-        os: "ubuntu-latest"
+        os: ubuntu-latest
         node-verison: 18
