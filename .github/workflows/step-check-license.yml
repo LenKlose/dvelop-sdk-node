@@ -11,8 +11,7 @@ on:
         required: true
 
 jobs:
-  check-license:
-    name: Check license
+  setup:
     runs-on: ${{inputs.os}}
     steps:
     - name: Checkout code
@@ -21,10 +20,18 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ inputs.node-version }}
-    - name: Install dependencies
-      uses: ${{GITHUB_REPOSITORY}}/.github/workflows/step-install-dependencies.yml@${{GITHUB_REF_NAME}}
+
+  install-dependencies:
+    needs: setup
+    steps:
+      uses: ./.github/workflows/step-install-dependencies.yml
       with:
         os: ${{inputs.os}}
         node-version: ${{inputs.node-version}}
+
+  check-license:
+    runs-on: ${{inputs.os}}
+    needs: install-dependencies
+    steps:
     - name: Run 'npm run license'
       run: npm run license
