@@ -24,7 +24,7 @@ jobs:
   install-dependencies:
     needs: setup
     steps:
-      uses: ./.github/workflows/step-install-dependencies.yml
+    - uses: ./.github/workflows/step-install-dependencies.yml
       with:
         os: ${{inputs.os}}
         node-version: ${{inputs.node-version}}
