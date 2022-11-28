@@ -6,8 +6,9 @@ on:
       - feature/ci-rework
 
 jobs:
-  quality-assurance:
-    uses: ./.github/workflows/quality-assurance.yml
+
+  build:
+    uses: ./.github/workflows/build.yml
     strategy:
       fail-fast: false
       matrix:
@@ -17,12 +18,26 @@ jobs:
       os: ${{ matrix.os }}
       node-version: ${{ matrix.node-version }}
 
-  build-final:
-    uses: ./.github/workflows/quality-assurance.yml
+  test:
+    uses: ./.github/workflows/test.yml
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node-version: [16, 17, 18]
+    with:
+      os: ${{ matrix.os }}
+      node-version: ${{ matrix.node-version }}
+
+  lint:
+    uses: ./.github/workflows/lint.yml
     with:
       os: ubuntu-latest
       node-version: 18
-      lint: true
-      check-license: true
-      generate-docs: true
 
+  check-license:
+    uses: ./.github/workflows/check-license.yml
+    with:
+      os: ubuntu-latest
+      node-version: 18

@@ -1,0 +1,24 @@
+on:
+  push:
+    branches:
+      - feature/ci-rework
+
+jobs:
+
+  check-ubuntu-node-18:
+    uses: ./.github/workflows/quality-assurance.yml
+    with:
+      os: ubuntu-latest
+      node-version: 18
+      lint: true
+      check-license: true
+      generate-docs: true
+
+  check-ubuntu-node-16:
+    uses: ./.github/workflows/quality-assurance.yml
+    with:
+      os: ubuntu-latest
+      node-version: 16
+      lint: false
+      check-license: false
+      generate-docs: false
