@@ -11,6 +11,7 @@ on:
 jobs:
 
   build:
+    name: "blub"
     runs-on: ${{inputs.os}}
     steps:
     - uses: actions/checkout@v3
