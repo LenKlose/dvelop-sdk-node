@@ -3,7 +3,7 @@ name: test
 on:
   push:
     branches:
-      - feature/ci-rework
+      - feature/ci-rework-disable
 
 jobs:
 

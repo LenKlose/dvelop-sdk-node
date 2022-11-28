@@ -5,20 +5,50 @@ on:
 
 jobs:
 
-  check-ubuntu-node-18:
+  check-ubuntu-latest-node-18:
     uses: ./.github/workflows/quality-assurance.yml
     with:
       os: ubuntu-latest
       node-version: 18
-      lint: true
-      check-license: true
-      generate-docs: true
 
-  check-ubuntu-node-16:
+  check-ubuntu-latest-node-17:
+    uses: ./.github/workflows/quality-assurance.yml
+    with:
+      os: ubuntu-latest
+      node-version: 17
+
+  check-ubuntu-latest-node-16:
     uses: ./.github/workflows/quality-assurance.yml
     with:
       os: ubuntu-latest
       node-version: 16
-      lint: false
-      check-license: false
-      generate-docs: false
+
+  check-windows-latest-node-18:
+    uses: ./.github/workflows/quality-assurance.yml
+    with:
+      os: windows-latest
+      node-version: 18
+
+  check-windows-latest-node-17:
+    uses: ./.github/workflows/quality-assurance.yml
+    with:
+      os: windows-latest
+      node-version: 17
+
+  check-windows-latest-node-16:
+    uses: ./.github/workflows/quality-assurance.yml
+    with:
+      os: windows-latest
+      node-version: 16
+
+  lint:
+    uses: ./.github/workflows/lint.yml
+    with:
+      os: ubuntu-latest
+      node-version: 18
+
+  check-license:
+    uses: ./.github/workflows/check-license.yml
+    with:
+      os: ubuntu-latest
+      node-version: 18
