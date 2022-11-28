@@ -17,5 +17,10 @@ jobs:
     - uses: actions/setup-node@v3
       with:
         node-version: ${{ inputs.node-version }}
-    - run: npm ci
+    - uses: actions/cache@v2
+      with:
+        path: ~/node_modules/
+        key: node_modules-${{ inputs.os }}-${{ inputs.node-version }}-${{ hashFiles('**/package-lock.json') }}
+    - if: steps.cached-dependencies.outputs.cache-hit != 'true'
+      run: npm ci
     - run: npm run build
