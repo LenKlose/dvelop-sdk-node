@@ -6,15 +6,10 @@ on:
       - feature/ci-rework
 
 jobs:
-
-  # test:
-  #   uses: ./.github/workflows/step-test.yml
-  #   with:
-  #     os: ubuntu-latest
-  #     node-version: 18
-
-  check-license:
-    uses: ./.github/workflows/step-check-license.yml
-    with:
-      os: ubuntu-latest
-      node-version: 18
+  build:
+    runs-on: "ubuntu-latest"
+    steps:
+    - uses: "./.github/workflows/build.yml"
+      with:
+        os: "ubuntu-latest"
+        node-verison: 18

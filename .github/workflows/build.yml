@@ -1,0 +1,23 @@
+name: Check license
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        type: string
+        required: true
+      node-version:
+        type: number
+        required: true
+
+jobs:
+
+  build:
+    runs-on: ${{inputs.os}}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node-version }}
+    - run: npm ci
+    - run: npm run build
