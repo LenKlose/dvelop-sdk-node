@@ -7,14 +7,14 @@ on:
 
 jobs:
 
-  build:
-    uses: ./.github/workflows/step-install-dependencies.yml
+  test:
+    uses: ./.github/workflows/step-test.yml
     with:
       os: ubuntu-latest
       node-version: 18
 
   check-license:
-    uses: ./.github/workflows/step-install-dependencies.yml
+    uses: ./.github/workflows/check-license.yml
     with:
       os: ubuntu-latest
       node-version: 18
