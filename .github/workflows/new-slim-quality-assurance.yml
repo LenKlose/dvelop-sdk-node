@@ -5,20 +5,16 @@ on:
     branches:
       - feature/ci-rework
 
-env:
-  OS: ubuntu-latest
-  NODE_VERSION: 18
-
 jobs:
 
   build:
     uses: ./.github/workflows/step-install-dependencies.yml
     with:
-      os: ${{env.OS}}
-      node-version: ${{env.NODE_VERSION}}
+      os: ubuntu-latest
+      node-version: 18
 
   check-license:
     uses: ./.github/workflows/step-install-dependencies.yml
     with:
-      os: ${{env.OS}}
-      node-version: ${{env.NODE_VERSION}}
+      os: ubuntu-latest
+      node-version: 18
