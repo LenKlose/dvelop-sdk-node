@@ -9,33 +9,33 @@ on:
         required: true
 
 jobs:
-  build:
-    runs-on: ${{inputs.os}}
+  # build:
+  #   runs-on: ${{inputs.os}}
 
-    steps:
+  #   steps:
 
-    - uses: actions/checkout@v3
+  #   - uses: actions/checkout@v3
 
-    - uses: actions/setup-node@v3
-      with:
-        node-version: ${{ inputs.node-version }}
+  #   - uses: actions/setup-node@v3
+  #     with:
+  #       node-version: ${{ inputs.node-version }}
 
-    - id: cache-dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/node_modules/
-        key: node_modules-${{ inputs.os }}-${{ inputs.node-version }}-${{ hashFiles('**/package-lock.json') }}
+  #   - id: cache-dependencies
+  #     uses: actions/cache@v3
+  #     with:
+  #       path: ~/node_modules/
+  #       key: node_modules-${{ inputs.os }}-${{ inputs.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
-    - if: steps.cached-dependencies.outputs.cache-hit != 'true'
-      run: npm ci
+  #   - if: steps.cached-dependencies.outputs.cache-hit != 'true'
+  #     run: npm ci
 
-    - run: npm run build
+  #   - run: npm run build
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: build-${{ inputs.os }}-node-${{ inputs.node-version }}
-        path: ${{ github.workspace }}/packages/**/lib/**/*
+  #   - name: Upload Artifact
+  #     uses: actions/upload-artifact@v3
+  #     with:
+  #       name: build-${{ inputs.os }}-node-${{ inputs.node-version }}
+  #       path: ${{ github.workspace }}/packages/**/lib/**/*
 
   test:
     needs: build
