@@ -33,5 +33,6 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: build-${{ inputs.os }}-node-${{ inputs.node-version }}
+        path: ${{ github.workspace }}/packages
 
     - run: npm run test
