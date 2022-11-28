@@ -10,4 +10,4 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       os: ubuntu-latest
-      node-verison: 18
+      node-version: 18
