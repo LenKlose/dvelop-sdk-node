@@ -18,12 +18,12 @@ export interface StoreFileTemporarilyParams {
  * @category DmsObject
  */
 export function _storeFileTemporarilyDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: StoreFileTemporarilyParams): string {
-  return response.headers["location"];
+  return response.headers["location"] || "";
 }
 
 /**
  * Factory for the {@link storeFileFunction}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link storeFileFunction}-function. A corresponding transformFuntion has to be supplied.
+ * @typeparam T Return type of the {@link storeFileFunction}-function. A corresponding transformFunction has to be supplied.
  * @internal
  * @category DmsObject
  */

@@ -59,6 +59,16 @@ export interface CreateTaskParams {
   sendCompletionNotification?: boolean;
   /** Specifies if a notification should be sent to the task creator when the due date is exceeded. This option is only available if a dueDate is specified. Default is false. */
   sendDueDateNotification?: boolean;
+  /** Configuration of actions in the user interface */
+  actionScopes?: {
+    /** Context for complete button. Possible values are "list" & "details" */
+    complete?: ("list" | "details")[];
+    /** Context for claim button. Possible values are "list" & "details" */
+    claim?: ("list" | "details")[];
+    /** Context for forward button. Possible values are "list" & "details" */
+    forward?: ("list" | "details")[];
+  }
+
   /** Links to the task */
   _links?: {
     /** This URI provides an editing dialog for the task. You can find further details in the section [Adding editing dialogs](https://developer.d-velop.de/documentation/taskapi/en#adding-editing-dialogs). */
@@ -80,12 +90,12 @@ export interface CreateTaskParams {
  * @category Task
  */
 export function _createTaskDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: CreateTaskParams): string {
-  return response.headers["location"];
+  return response.headers["location"] || "";
 }
 
 /**
  * Factory for the {@link createTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link createTask}-function. A corresponding transformFuntion has to be supplied.
+ * @typeparam T Return type of the {@link createTask}-function. A corresponding transformFunction has to be supplied.
  * @internal
  * @category Task
  */
@@ -120,8 +130,7 @@ export function _createTaskFactory<T>(
 
     const response: HttpResponse = await httpRequestFunction(context, {
       method: "POST",
-      url: "/task",
-      follows: ["tasks"],
+      url: "/task/tasks",
       data: task
     });
 
@@ -131,6 +140,7 @@ export function _createTaskFactory<T>(
 
 /**
  * Create a task.
+ * @returns Location of the created task
  *
  * ```typescript
  * import { createTask } from "@dvelop-sdk/task";

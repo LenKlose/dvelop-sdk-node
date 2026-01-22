@@ -1,5 +1,5 @@
 import { DvelopContext } from "@dvelop-sdk/core";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import {HttpConfig, HttpResponse, _defaultHttpRequestFunction, TaskError} from "../../utils/http";
 
 /**
  * Parameters for the {@link completeTask}-function.
@@ -12,7 +12,7 @@ export interface CompleteTaskParams {
 
 /**
  * Factory for the {@link completeTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link completeTask}-function. A corresponding transformFuntion has to be supplied.
+ * @typeparam T Return type of the {@link completeTask}-function. A corresponding transformFunction has to be supplied.
  * @internal
  * @category Task
  */
@@ -21,16 +21,21 @@ export function _completeTaskFactory<T>(
   transformFunction: (response: HttpResponse, context: DvelopContext, params: CompleteTaskParams) => T,
 ): (context: DvelopContext, params: CompleteTaskParams) => Promise<T> {
   return async (context: DvelopContext, params: CompleteTaskParams) => {
+    const matches: RegExpExecArray | null = /^\/task\/tasks\/(?<id>[^?]*)\??.*$/i.exec(params.location);
+    if (matches) {
+      const id = matches.groups?.id;
 
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "POST",
-      url: params.location,
-      follows: ["completion"],
-      data: {
-        complete: true
-      }
-    });
-    return transformFunction(response, context, params);
+      const response: HttpResponse = await httpRequestFunction(context, {
+        method: "POST",
+        url: `/task/tasks/${id}/completionState`,
+        data: {
+          complete: true
+        }
+      });
+      return transformFunction(response, context, params);
+    } else {
+      throw new TaskError(`Failed to parse task id from '${params.location}'`);
+    }
   };
 }
 

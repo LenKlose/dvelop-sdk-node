@@ -61,6 +61,15 @@ export interface UpdateTaskParams {
   sendCompletionNotification?: boolean;
   /** Specifies if a notification should be sent to the task creator when the due date is exceeded. This option is only available if a dueDate is specified. Default is false. */
   sendDueDateNotification?: boolean;
+  /** Configuration of actions in the user interface */
+  actionScopes?: {
+    /** Context for complete button. Possible values are "list" & "details" */
+    complete?: ("list" | "details")[];
+    /** Context for claim button. Possible values are "list" & "details" */
+    claim?: ("list" | "details")[];
+    /** Context for forward button. Possible values are "list" & "details" */
+    forward?: ("list" | "details")[];
+  }
   /** Links to the task */
   _links?: {
     /** This URI provides an editing dialog for the task. You can find further details in the section [Adding editing dialogs](https://developer.d-velop.de/documentation/taskapi/en#adding-editing-dialogs). */
@@ -78,7 +87,7 @@ export interface UpdateTaskParams {
 
 /**
  * Factory for the {@link updateTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link updateTask}-function. A corresponding transformFuntion has to be supplied.
+ * @typeparam T Return type of the {@link updateTask}-function. A corresponding transformFunction has to be supplied.
  * @internal
  * @category Task
  */
@@ -89,7 +98,8 @@ export function _updateTaskFactory<T>(
 
   return async (context: DvelopContext, params: UpdateTaskParams) => {
 
-    const task: any = { ...params, ...{ location: null } };
+    const task: any = { ...params };
+    delete task.location;
 
     if (params.dueDate) {
       task.dueDate = params.dueDate.toISOString();

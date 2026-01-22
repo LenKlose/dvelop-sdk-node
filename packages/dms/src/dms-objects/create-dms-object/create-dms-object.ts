@@ -45,7 +45,7 @@ export interface CreateDmsObjectParams {
  */
 export function _createDmsObjectDefaultTransformFunction(response: HttpResponse<any>, _: DvelopContext, params: CreateDmsObjectParams): GetDmsObjectParams {
 
-  const location: string = response.headers["location"];
+  const location: string = response.headers["location"] || "";
   const matches: RegExpExecArray | null = /^.*\/(.*?)(\?|$)/.exec(location);
 
   if (matches) {
@@ -74,7 +74,7 @@ export async function _createDmsObjectDefaultStoreFileFunction(context: DvelopCo
 
 /**
  * Factory for the {@link createDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link createDmsObject}-function. A corresponding transformFuntion has to be supplied.
+ * @typeparam T Return type of the {@link createDmsObject}-function. A corresponding transformFunction has to be supplied.
  * @category DmsObject
  */
 export function createDmsObjectFactory<T>(

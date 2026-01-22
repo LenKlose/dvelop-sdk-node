@@ -1,6 +1,5 @@
-import { DvelopContext } from "../../index";
+import { DvelopContext, SearchDmsObjectsResultPage, getDmsObjectMainFile, getDmsObjectPdfFile, SearchDmsObjectsParams, searchDmsObjects, DmsObjectNote, getDmsObjectNotes } from "../../index";
 import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
-import { getDmsObjectMainFile, getDmsObjectPdfFile } from "../get-dms-object-file/get-dms-object-file";
 
 /**
  * Parameters for the {@link getDmsObject}-function.
@@ -45,6 +44,10 @@ export interface DmsObject {
   getMainFile?: () => Promise<ArrayBuffer>;
   /** Function that returns the DmsObject-pdf. */
   getPdfFile?: () => Promise<ArrayBuffer>;
+  /** Function that returns a searchresult of all children. */
+  searchChildren?: () => Promise<SearchDmsObjectsResultPage>;
+  /** Function that returns the notes of a DmsObject. */
+  getNotes?: () => Promise<DmsObjectNote[]>;
 }
 
 /**
@@ -54,7 +57,8 @@ export interface DmsObject {
  */
 export function _getDmsObjectDefaultTransformFunctionFactory(
   getDmsObjectMainFileFunction: (context: DvelopContext, params: GetDmsObjectParams) => Promise<ArrayBuffer>,
-  getDmsObjectPdfFileFunction: (context: DvelopContext, params: GetDmsObjectParams) => Promise<ArrayBuffer>
+  getDmsObjectPdfFileFunction: (context: DvelopContext, params: GetDmsObjectParams) => Promise<ArrayBuffer>,
+  searchDmsObjects: (context: DvelopContext, params: SearchDmsObjectsParams) => Promise<SearchDmsObjectsResultPage>,
 ) {
   return (response: HttpResponse<any>, context: DvelopContext, params: GetDmsObjectParams) => {
 
@@ -74,13 +78,25 @@ export function _getDmsObjectDefaultTransformFunctionFactory(
       dmsObject.getPdfFile = async () => (await getDmsObjectPdfFileFunction(context, params));
     }
 
+    if (response.data._links.children) {
+      dmsObject.searchChildren = async () => (await searchDmsObjects(context, {
+        repositoryId: params.repositoryId,
+        sourceId: params.sourceId,
+        childrenOf: params.dmsObjectId
+      }));
+    }
+
+    if (response.data._links.notes) {
+      dmsObject.getNotes = async () => (await getDmsObjectNotes(context, params));
+    }
+
     return dmsObject;
   };
 }
 
 /**
  * Factory for {@link getDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the getRepositories-function. A corresponding transformFuntion has to be supplied.
+ * @typeparam T Return type of the {@link getDmsObject}-function. A corresponding transformFunction has to be supplied.
  * @internal
  * @category DmsObject
  */
@@ -105,13 +121,13 @@ export function _getDmsObjectFactory<T>(
 }
 
 /**
- * Factory for the default-transform-function for the {@link searchDmsObjects}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * Factory for the default-transform-function for the {@link getDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category DmsObject
  */
 /* istanbul ignore next */
 export async function _getDmsObjectDefaultTransformFunction(response: HttpResponse<any>, context: DvelopContext, params: GetDmsObjectParams) {
-  return _getDmsObjectDefaultTransformFunctionFactory(getDmsObjectMainFile, getDmsObjectPdfFile)(response, context, params);
+  return _getDmsObjectDefaultTransformFunctionFactory(getDmsObjectMainFile, getDmsObjectPdfFile, searchDmsObjects)(response, context, params);
 }
 
 /**

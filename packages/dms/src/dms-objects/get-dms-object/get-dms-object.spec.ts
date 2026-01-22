@@ -1,11 +1,14 @@
-import { DvelopContext, DmsObject } from "../../index";
+import { DmsObjectNote, DvelopContext, getDmsObjectMainFile, getDmsObjectNotes, getDmsObjectPdfFile, searchDmsObjects, SearchDmsObjectsResultPage } from "../../index";
 import { HttpResponse } from "../../utils/http";
-import { getDmsObjectMainFile, getDmsObjectPdfFile } from "../get-dms-object-file/get-dms-object-file";
-import { GetDmsObjectParams, _getDmsObjectFactory, _getDmsObjectDefaultTransformFunction } from "../get-dms-object/get-dms-object";
+import { GetDmsObjectParams, _getDmsObjectFactory, _getDmsObjectDefaultTransformFunction, DmsObject } from "../get-dms-object/get-dms-object";
 
 jest.mock("../get-dms-object-file/get-dms-object-file");
+jest.mock("../search-dms-objects/search-dms-objects");
+jest.mock("../get-dms-object-notes/get-dms-object-notes");
 const mockGetDmsObjectMainFile = getDmsObjectMainFile as jest.MockedFunction<typeof getDmsObjectMainFile>;
 const mockGetDmsObjectPdfFile = getDmsObjectPdfFile as jest.MockedFunction<typeof getDmsObjectPdfFile>;
+const mockSearchDmsObjects = searchDmsObjects as jest.MockedFunction<typeof searchDmsObjects>;
+const mockGetDmsObjectNotes = getDmsObjectNotes as jest.MockedFunction<typeof getDmsObjectNotes>;
 
 describe("getDmsObject", () => {
 
@@ -117,7 +120,7 @@ describe("getDmsObject", () => {
         },
         "id": "HiItsMeId",
         "sourceProperties": [],
-        "sourceCategories": [ ]
+        "sourceCategories": []
       };
 
       const response: HttpResponse = { data: data } as HttpResponse;
@@ -130,6 +133,7 @@ describe("getDmsObject", () => {
 
       expect(result.getMainFile).toEqual(expect.any(Function));
 
+      // @ts-ignore: Object is possibly 'null'.
       const resultFile: ArrayBuffer = await result.getMainFile();
       expect(mockGetDmsObjectMainFile).toHaveBeenCalledTimes(1);
       expect(mockGetDmsObjectMainFile).toHaveBeenCalledWith(context, params);
@@ -146,7 +150,7 @@ describe("getDmsObject", () => {
         },
         "id": "HiItsMeId",
         "sourceProperties": [],
-        "sourceCategories": [ ]
+        "sourceCategories": []
       };
 
       const response: HttpResponse = { data: data } as HttpResponse;
@@ -159,10 +163,88 @@ describe("getDmsObject", () => {
 
       expect(result.getPdfFile).toEqual(expect.any(Function));
 
+      // @ts-ignore: Object is possibly 'null'.
       const resultFile: ArrayBuffer = await result.getPdfFile();
       expect(mockGetDmsObjectPdfFile).toHaveBeenCalledTimes(1);
       expect(mockGetDmsObjectPdfFile).toHaveBeenCalledWith(context, params);
       expect(resultFile).toBe(pdfFile);
+    });
+
+    it("should set getChildren correctly", async () => {
+
+      const data: any = {
+        "_links": {
+          "children": {
+            "href": "HiItsMeChildrenHref"
+          },
+        },
+        "id": "HiItsMeId",
+        "sourceProperties": [],
+        "sourceCategories": []
+      };
+
+      const response: HttpResponse = { data: data } as HttpResponse;
+      mockHttpRequestFunction.mockResolvedValue(response);
+      const searchResultPage: SearchDmsObjectsResultPage = {
+        page: 42,
+        dmsObjects: []
+      }
+      mockSearchDmsObjects.mockResolvedValue(searchResultPage);
+
+      const getDmsObject = _getDmsObjectFactory(mockHttpRequestFunction, _getDmsObjectDefaultTransformFunction);
+      const result: DmsObject = await getDmsObject(context, params);
+
+      expect(result.searchChildren).toEqual(expect.any(Function));
+
+
+      // @ts-ignore: Object is possibly 'null'.
+      const resultChildren: SearchDmsObjectsResultPage = await result.searchChildren();
+      expect(mockSearchDmsObjects).toHaveBeenCalledTimes(1);
+      expect(mockSearchDmsObjects).toHaveBeenCalledWith(context, {
+        repositoryId: params.repositoryId,
+        sourceId: params.sourceId,
+        childrenOf: params.dmsObjectId
+      });
+      expect(resultChildren).toBe(searchResultPage);
+    });
+
+    it("should set getNotes correctly", async () => {
+
+      const data: any = {
+        "_links": {
+          "notes": {
+            "href": "HiItsMeNotedHref"
+          },
+        },
+        "id": "HiItsMeId",
+        "sourceProperties": [],
+        "sourceCategories": []
+      };
+
+      const response: HttpResponse = { data: data } as HttpResponse;
+      mockHttpRequestFunction.mockResolvedValue(response);
+
+      const notes: DmsObjectNote[] = [{
+        created: new Date(),
+        creator: {
+          id: "HiItsMeCreatorId",
+          displayName: "HiItsMeCreatorDisplayName"
+        },
+        text: "HiItsMeNoteText"
+      }];
+      mockGetDmsObjectNotes.mockResolvedValue(notes);
+
+      const getDmsObject = _getDmsObjectFactory(mockHttpRequestFunction, _getDmsObjectDefaultTransformFunction);
+      const result: DmsObject = await getDmsObject(context, params);
+
+      expect(result.getNotes).toEqual(expect.any(Function));
+
+
+      // @ts-ignore: Object is possibly 'null'.
+      const resultNotes: DmsObjectNote[] = await result.getNotes();
+      expect(mockGetDmsObjectNotes).toHaveBeenCalledTimes(1);
+      expect(mockGetDmsObjectNotes).toHaveBeenCalledWith(context, params);
+      expect(resultNotes).toBe(notes);
     });
   });
 });
